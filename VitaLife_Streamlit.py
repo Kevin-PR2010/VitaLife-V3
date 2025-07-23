@@ -1,32 +1,3 @@
-import os
-import subprocess
-
-# Check if spaCy model is installed
-try:
-    import spacy
-    spacy.load("en_core_web_sm")
-except:
-    # Install model if missing
-    with st.spinner("Installing medical language model (first time only)..."):
-        subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-    st.rerun()
-    import streamlit as st
-import uuid
-import json
-import os
-from datetime import datetime
-import re
-import spacy
-from difflib import get_close_matches
-import matplotlib.pyplot as plt
-import numpy as np
-import subprocess  # Add this
-
-# Model installation check
-if not os.system("python -m spacy validate en_core_web_sm > /dev/null 2>&1"):
-    with st.spinner("Downloading medical language model..."):
-        os.system("python -m spacy download en_core_web_sm")
-    st.experimental_rerun()
 import streamlit as st
 import uuid
 import json
@@ -37,15 +8,6 @@ import spacy
 from difflib import get_close_matches
 import matplotlib.pyplot as plt
 import numpy as np
-
-# Load lightweight NLP model
-try:
-    nlp = spacy.load("en_core_web_sm")
-except:
-    st.warning("Medical terminology enhancement requires spaCy model. Installing...")
-    os.system("python -m spacy download en_core_web_sm")
-    import spacy
-    nlp = spacy.load("en_core_web_sm")
 
 # Page configuration
 st.set_page_config(
@@ -71,6 +33,19 @@ if 'suggestions' not in st.session_state:
     st.session_state.suggestions = []
 if 'show_voice' not in st.session_state:
     st.session_state.show_voice = False
+
+# Load spaCy model with robust error handling
+try:
+    nlp = spacy.load("en_core_web_sm")
+    st.toast("Medical language model loaded successfully!", icon="✅")
+except:
+    try:
+        import en_core_web_sm
+        nlp = en_core_web_sm.load()
+        st.toast("Loaded medical model from module", icon="✅")
+    except Exception as e:
+        st.error(f"Critical error loading medical model: {str(e)}")
+        st.stop()
 
 # Enhanced medical knowledge base
 MEDICAL_KNOWLEDGE = {
