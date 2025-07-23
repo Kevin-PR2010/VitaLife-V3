@@ -1,3 +1,32 @@
+import os
+import subprocess
+
+# Check if spaCy model is installed
+try:
+    import spacy
+    spacy.load("en_core_web_sm")
+except:
+    # Install model if missing
+    with st.spinner("Installing medical language model (first time only)..."):
+        subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+    st.rerun()
+    import streamlit as st
+import uuid
+import json
+import os
+from datetime import datetime
+import re
+import spacy
+from difflib import get_close_matches
+import matplotlib.pyplot as plt
+import numpy as np
+import subprocess  # Add this
+
+# Model installation check
+if not os.system("python -m spacy validate en_core_web_sm > /dev/null 2>&1"):
+    with st.spinner("Downloading medical language model..."):
+        os.system("python -m spacy download en_core_web_sm")
+    st.experimental_rerun()
 import streamlit as st
 import uuid
 import json
